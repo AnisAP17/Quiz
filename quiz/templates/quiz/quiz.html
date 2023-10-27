@@ -1,0 +1,34 @@
+{% extends "quiz/base.html" %}
+{%block title%}{{title}}{%endblock title%}
+{% block content %}
+<h1>{{ title }}</h1>
+<form method="POST">
+    {% csrf_token %}
+    {% for data in question_data %}
+    <div class="question">
+        <h2>{{ data.question.question }}</h2>
+        {% if data.question.image %}
+        <div style="margin:-8px 0 20px">
+            <img src="{{ MEDIA_URL }}{{ data.question.image }}">
+        </div>
+        {% endif %}
+        {% if data.question.full_text %}
+        <p style="margin-top:-8px; line-height:1.4">{{ data.question.full_text }}</p>
+        {% endif %}
+        {% for answer in data.answers %}
+        <div class="option">
+            {% if data.is_multiple_choice %}
+            <input type="checkbox" name="{{ data.question.id }}" value="{{ answer.id }}">
+            {% else %}
+            <input type="radio" name="{{ data.question.id }}" value="{{ answer.id }}">
+            {% endif %}
+            <label>{{ answer.answer }}</label>
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    <input type="submit" value="Submit">
+</form>
+
+
+{% endblock content%}
