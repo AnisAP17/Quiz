@@ -1,0 +1,17 @@
+{% extends 'quiz/base.html' %}
+{% block content %}
+
+    <h1>{{title}}</h1>
+    <div>
+        {% for quiz in quizzes %}
+        <h2>
+            <a href="{{ quiz.get_absolute_url }}">
+                {{ quiz.title }}
+            </a>
+        </h2>
+        {{ quiz.description | linebreaks }}
+        {% endfor %}
+    </div>
+
+{% endblock %}
+

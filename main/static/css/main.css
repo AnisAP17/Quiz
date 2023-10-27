@@ -1,0 +1,33 @@
+.buttonLogo {
+    outline-style: none;
+    background: none;
+    border: none;
+    color: white;
+  }
+  
+  .buttonLogo:hover {
+    outline-style: none;
+    background: hsl(273, 65%, 75%);
+    border: none;
+    color: white;
+  }
+  
+  .buttonSvg {
+    outline-style: none;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+  
+    height: 50px;
+  }
+  
+  .buttonSvg:hover {
+    outline-style: none;
+    background: hsl(273, 65%, 75%);
+    border: none;
+    color: white;
+    cursor: pointer;
+  
+    height: 50px;
+  }
