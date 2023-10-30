@@ -4,6 +4,9 @@ from django.http import HttpResponse
 from quiz.models import Category, Quiz, Answer, UserAnswer
 from django.db.models import Count
 from django.contrib.auth.decorators import login_required
+import random
+from django.http import HttpResponse
+from django.views import View
 
 
 # Create your views here.
@@ -84,3 +87,33 @@ def quiz_view(request, category_slug, quiz_slug):
     }
 
     return render(request, 'quiz/quiz.html', context=context)
+
+
+
+def viktorin(request):
+    if request.method == 'POST':
+        questions = request.session.get('questions')
+        score = 0
+        user_answers = []
+        for question, answer in questions:
+            user_answer = request.POST.get(question)
+            if user_answer.lower() == answer.lower():
+                score += 1
+                result = 'Правильно'
+            else:
+                result = 'Неправильно'
+            user_answers.append((question, user_answer, result))
+        context = {'questions': questions, 'score': score, 'user_answers': user_answers}
+    else:
+        questions = [
+            ('Вопрос 1', 'Ответ 1'),
+            ('Вопрос 2', 'Ответ 2'),
+            ('Вопрос 3', 'Ответ 3'),
+            ('Вопрос 4', 'Ответ 4'),
+            ('Вопрос 5', 'Ответ 5'),
+            # добавьте сюда больше вопросов...
+        ]
+        random_questions = random.sample(questions, 5)
+        request.session['questions'] = random_questions
+        context = {'questions': random_questions}
+    return render(request, 'quiz/viktorin.html', context)

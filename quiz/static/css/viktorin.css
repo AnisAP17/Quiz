@@ -1,0 +1,31 @@
+/* Фон страницы */
+body {
+    background-color: #800080;
+    color: #ffffff;
+}
+
+/* Заголовки */
+h1, h2, h3, h4, h5, h6 {
+    color: #e0b0ff;
+}
+
+/* Ссылки */
+a {
+    color: #bf00ff;
+}
+
+/* Кнопки */
+button {
+    background-color: #bf00ff;
+    color: #ffffff;
+    border: none;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #e0b0ff;
+}
