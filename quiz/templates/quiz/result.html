@@ -1,0 +1,41 @@
+{% extends "quiz/base.html" %}
+{% block content %}
+<style>
+    .result {
+        width: 1000px;
+        border: 1px solid #ddd;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    }
+    .result h2 {
+        color: #333;
+        margin-bottom: 10px;
+    }
+    .result p {
+        margin-bottom: 10px;
+    }
+    .result p:last-child {
+        margin-bottom: 0;
+    }
+</style>
+<h1 class="py-4" style="text-align: center; color: #333; margin-bottom: 40px;">Результаты теста</h1>
+{% for result in results %}
+<div class="d-flex justify-content-center">
+<div class="result">
+    <h2>{{forloop.counter}}) {{ result.question }}</h2>
+    <p><strong>Ваши ответы:</strong> {{ result.user_answers|join:", " }}</p>
+    <p><strong>Правильные ответы:</strong> {{ result.correct_answers|join:", " }}</p>
+    {% if result.is_correct %}
+    <p style="color: green;"><strong>{{ result.result_text }}</strong></p>
+    {% else %}
+    <p style="color: red;"><strong>Вы не правильно ответили.</strong></p>
+    {% endif %}
+</div>
+</div>
+{% endfor %}
+<div class="text-center">
+    <a style="text-decoration: none; font-size:20px;" href="{%url 'index'%}">Назад на страницу катигориев тестов</a> 
+</div>
+{% endblock %}

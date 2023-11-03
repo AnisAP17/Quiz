@@ -7,32 +7,41 @@ from django.db.models import (
     CASCADE,
     CharField,
     TextField,
+    DateField,
+    IntegerField,
     SlugField,
     ForeignKey,
     DateTimeField,
     ImageField,
     BooleanField,
     PositiveSmallIntegerField,
+    FloatField,
 )
 
 from django.urls import reverse
 
 
 class Category(Model):
+    image = ImageField(
+       verbose_name='изображение',
+       upload_to='quiz/%Y/',
+       blank=True,
+   )
     title = CharField(
-        'название',
+        verbose_name='название',
         max_length=150,
     )
     slug = SlugField(
-        'URL',
+        verbose_name='URL',
         unique=True,
     )
     description = TextField(
-        'описание',
+        verbose_name='описание',
         blank=True,
     )
+    
     npp = PositiveSmallIntegerField(
-        'сортировка',
+        verbose_name='сортировка',
         default=0,
     )
 
@@ -62,20 +71,25 @@ class Quiz(Model):
         on_delete=PROTECT,
         verbose_name='автор',
     )
+    image = ImageField(
+       verbose_name='изображение',
+       upload_to='quiz/%Y/',
+       blank=True,
+   )
     title = CharField(
-        'название',
+        verbose_name='название',
         max_length=150,
     )
     slug = SlugField(
-        'URL',
+        verbose_name='URL',
         unique=True,  # Ensure the slug is unique
     )
     description = TextField(
-        'описание',
+        verbose_name='описание',
         blank=True,
     )
     is_public = BooleanField(
-        'отображается на странице категории',
+        verbose_name='отображается на странице категории',
         default=True,
     )
     category = ForeignKey(
@@ -84,20 +98,34 @@ class Quiz(Model):
         verbose_name='категория',
     )
     created = DateTimeField(
-        'создан',
+        verbose_name='создан',
         auto_now_add=True,
     )
     modified = DateTimeField(
-        'изменен',
+        verbose_name='изменен',
         auto_now=True,
     )
-    npp = PositiveSmallIntegerField(
-        'сортировка',
+    date = DateField(
+        verbose_name='дата',
+        auto_now_add=True,
+    )
+    users_passed = IntegerField(
+        verbose_name='количество прошедших пользователей',
         default=0,
     )
+    npp = PositiveSmallIntegerField(
+        verbose_name='сортировка',
+        default=0,
+    )
+    time_limit = models.IntegerField(
+        default=0,
+        )  # Время в секундах
 
     def __str__(self):
         return self.title
+    
+    def has_timer(self):
+        return self.time_limit > 0
 
     class Meta:
         db_table = 'quiz'
@@ -127,15 +155,15 @@ class Question(Model):
        verbose_name='тест',
    )
    question = CharField(
-       'вопрос',
+       verbose_name='вопрос',
        max_length=150,
    )
    full_text = TextField(
-       'описание вопроса',
+       verbose_name='описание вопроса',
        blank=True,
    )
    image = ImageField(
-       'изображение',
+       verbose_name='изображение',
        upload_to='quiz/%Y/',
        blank=True,
    )
@@ -151,15 +179,15 @@ class Question(Model):
 
 class Answer(Model):
    answer = CharField(
-       'ответ',
+       verbose_name='ответ',
        max_length=150,
    )
    is_correct = BooleanField(
-       'правильный ответ',
+       verbose_name='правильный ответ',
        default=False,
    )
    comment = CharField(
-       'комментарий к ответу',
+       verbose_name='комментарий к ответу',
        max_length=200,
        blank=True,
    )
@@ -167,6 +195,10 @@ class Answer(Model):
        Question,
        on_delete=CASCADE,
        verbose_name='вопрос',
+   )
+   score = FloatField(
+       verbose_name='баллы',
+        default=0   
    )
 
    def __str__(self):
@@ -181,13 +213,18 @@ class Answer(Model):
 class UserAnswer(models.Model):
 
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     answers = models.ManyToManyField(Answer, related_name='user_answers')
     correct_answer = models.ManyToManyField(Answer, blank=True, related_name='correct_user_answers')
+    time_spent = models.IntegerField(default=0)  # Время в миллисекундах
+    attempt_number = models.IntegerField(default=1)  # Новое поле для отслеживания номера попытки
+    score = FloatField(default=0)
 
-    def __str__(self):
+    def __str__(self): 
         answers = ", ".join(str(answer) for answer in self.answers.all())
-        return f'{self.user.username}: {self.question.question}: {answers}'
+        return f'{self.user.email}: {self.quiz.title}: {self.question.question}: {answers}'
 
 
     def save(self, *args, **kwargs):

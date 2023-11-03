@@ -1,34 +1,153 @@
 {% extends "quiz/base.html" %}
-{%block title%}{{title}}{%endblock title%}
+{% block title %}<title>{{title}}</title>{% endblock title %}
 {% block content %}
-<h1>{{ title }}</h1>
-<form method="POST">
+<style>
+        /* Ваш CSS-код */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .option {
+            margin-bottom: 10px;
+        }
+        .option input {
+            margin-right: 10px;
+        }
+        #countdown {
+            text-align: end;
+            font-size: 1em;  /* Увеличивает размер шрифта */
+            color: #333;  /* Изменяет цвет текста */
+            padding: 10px;  /* Добавляет отступ вокруг текста */
+            border: 2px solid #333;  /* Добавляет границу вокруг элемента */
+            border-radius: 10px;  /* Скругляет углы границы */
+            margin-bottom: 20px;  /* Добавляет отступ под элементом */
+            margin-right: 10px;
+        }
+        .submit-button {
+            background-color: #4CAF50; /* Зеленый */
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    
+        .submit-button:hover {
+            background-color: #45a049; /* Темно-зеленый */
+        }
+</style>
+<script>
+    function formatTime(seconds) {
+        var minutes = Math.floor(seconds / 60);
+        var remainingSeconds = seconds % 60;
+        if (remainingSeconds < 10) {
+            remainingSeconds = "0" + remainingSeconds;  // добавить ведущий ноль, если секунд меньше 10
+        }
+        return minutes + ":" + remainingSeconds;
+    }
+    window.onload = function() {
+        var timeLimit = localStorage.getItem('timeLimit') || {{time_limit}};  // Получить время из localStorage или установить начальное время
+        var timeSpent = 0;
+    
+        // Получите элемент, который будет отображать оставшееся время
+        var countdownDisplay = document.getElementById('countdown');
+        countdownDisplay.textContent = 'Оставшееся время: ' + formatTime(timeLimit);  // Установите начальное отображаемое время
+    
+        function validateForm() {
+            document.getElementById('time_spent').value = timeSpent;
+        
+            var questions = document.getElementsByClassName('question');
+            for (var i = 0; i < questions.length; i++) {
+                var options = questions[i].getElementsByClassName('option');
+                var isChecked = false;
+                for (var j = 0; j < options.length; j++) {
+                    if (options[j].getElementsByTagName('input')[0].checked) {
+                        isChecked = true;
+                        break;
+                    }
+                }
+                if (!isChecked) {
+                    alert('Пожалуйста, ответьте на все вопросы перед завершением теста.');
+                    return false;
+                }
+            }
+            return true;
+        }
+    
+        // Создайте таймер обратного отсчета
+        var countdownTimer = setInterval(function() {
+            timeSpent++;
+            countdownDisplay.textContent = 'Оставшееся время: ' + formatTime(timeLimit - timeSpent);
+            if (timeSpent >= timeLimit) {
+                alert('Время на прохождение теста истекло. Ваши ответы были сохранены.');
+                document.getElementById('quiz_form').submit();
+                clearInterval(countdownTimer);
+            }
+        }, 1000);
+    
+        // Сохраните оставшееся время в localStorage перед обновлением страницы
+        window.addEventListener('beforeunload', function() {
+            localStorage.setItem('timeLimit', timeLimit - timeSpent);
+        });
+    }
+    window.onbeforeunload = function() {
+        if (document.activeElement.name == 'skip') {
+            return;  // Не показывать диалоговое окно подтверждения выхода, если пользователь нажал кнопку "Пропустить вопрос"
+        }
+        var questions = document.getElementsByClassName('question');
+        for (var i = 0; i < questions.length; i++) {
+            var options = questions[i].getElementsByClassName('option');
+            var isChecked = false;
+            for (var j = 0; j < options.length; j++) {
+                if (options[j].getElementsByTagName('input')[0].checked) {
+                    isChecked = true;
+                    break;
+                }
+            }
+            if (!isChecked) {
+                return 'Вы еще не ответили на все вопросы. Вы уверены, что хотите покинуть страницу?';
+            }
+        }
+        // Сбросить таймер обратного отсчета до начального значения
+        localStorage.removeItem('timeLimit');
+    }
+    window.onunload = function() {
+        // Сбросить таймер обратного отсчета до начального значения
+        localStorage.removeItem('timeLimit');
+    }
+
+    
+</script>
+<h1 style="text-align:center; color:#333; padding-top: 20px; padding-bottom: 30px;">{{ title }}</h1>
+{% if time_limit > 0 %}
+<div class="d-flex justify-content-end"><p id="countdown">{{ time_limit }}</p></div>
+{% endif %}
+
+<form id="quiz_form" method="POST" style="width:70%; margin:auto;">
     {% csrf_token %}
-    {% for data in question_data %}
-    <div class="question">
-        <h2>{{ data.question.question }}</h2>
-        {% if data.question.image %}
-        <div style="margin:-8px 0 20px">
-            <img src="{{ MEDIA_URL }}{{ data.question.image }}">
-        </div>
-        {% endif %}
-        {% if data.question.full_text %}
-        <p style="margin-top:-8px; line-height:1.4">{{ data.question.full_text }}</p>
-        {% endif %}
-        {% for answer in data.answers %}
+    <div class="question py-3">
+        <h2 style="border-bottom: 1px solid black;">{{question.id}}) {{ question.question }}</h2>
+        {% for answer in answers %}
         <div class="option">
-            {% if data.is_multiple_choice %}
-            <input type="checkbox" name="{{ data.question.id }}" value="{{ answer.id }}">
+            {% if is_multiple_choice %}
+            <input type="checkbox" name="answer" value="{{ answer.id }}">
             {% else %}
-            <input type="radio" name="{{ data.question.id }}" value="{{ answer.id }}">
+            <input type="radio" name="answer" value="{{ answer.id }}">
             {% endif %}
             <label>{{ answer.answer }}</label>
         </div>
         {% endfor %}
     </div>
-    {% endfor %}
-    <input type="submit" value="Submit">
+    <div class="text-center">
+        <input class="submit-button" type="submit" style="border-radius: 5px;" value="Отправить ответ">
+        <button type="submit" name="skip" value="true">Пропустить вопрос</button>
+    </div>
 </form>
-
-
-{% endblock content%}
+{% endblock content %}
