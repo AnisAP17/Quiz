@@ -1,0 +1,10 @@
+{% extends 'adminPage/admin_profile.html' %}
+
+{% block content %}
+  <h2>Создать ответ</h2>
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Сохранить</button>
+  </form>
+{% endblock %}

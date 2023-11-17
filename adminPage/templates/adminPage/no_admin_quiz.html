@@ -1,0 +1,126 @@
+{% extends 'adminPage/admin_profile.html' %}
+{% load static%}
+{% block title %}
+<title>Quiz</title>
+{% endblock title %}
+
+{% block content %}
+<div style="border-radius: 10px; background-color: white; padding: 20px;">
+    <h2 class="text-center">В этом тесте пока нету вопросов</h2>
+    <div class="py-4 d-flex justify-content-center">
+        <button id="addQuestionButton" class=" btn btn-primary">Добавить вопрос к тесту</button>
+    </div>
+    <div id="addQuestionForm" style="display: none;">
+        <form method="POST" enctype="multipart/form-data" class="question-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {{ formset.management_form }}
+            <div id="formset-container" class="formset-container">
+                {% for form in formset %}
+                    <div class="formset-form">
+                        {{ form.as_p }}
+                    </div>
+                {% endfor %}
+            </div>
+            <input type="submit" value="Сохранить">
+          </form>
+    </div>
+
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'js/jquery.formset.js' %}"></script>
+<script>
+// При нажатии на кнопку "Добавить вопрос к тесту" показать форму
+document.getElementById('addQuestionButton').addEventListener('click', function() {
+    document.getElementById('addQuestionForm').style.display = 'block';
+});
+</script>
+
+<style>
+    .question-form {
+      width: 75%;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background-color: #f8f8f8;
+    }
+
+    .question-form h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    .formset-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .formset-form {
+      display: flex;
+      flex: 1 0 calc(33.33% - 10px);
+      margin-bottom: 10px;
+    }
+
+    input[type="text"] {
+      width: 25vh;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    input[type="number"] {
+        width: 25vh;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    input[type="file"] {
+        width: 25vh;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    label{
+        width: 25vh;
+    }
+    input[type="checkbox"] {
+        width: 10vh;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    textarea{
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    select{
+        width: 25vh;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    
+      
+
+    .question-form input[type="submit"] {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      background-color: #007BFF;
+      cursor: pointer;
+    }
+
+    .question-form input[type="submit"]:hover {
+      background-color: #0056b3;
+    }
+  </style>
+
+{% endblock content %}

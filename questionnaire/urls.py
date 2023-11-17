@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('register/', views.register, name='register'),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('adminPage/', include('adminPage.urls')),
     path('', include('main.urls')),
     path('quiz/', include('quiz.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

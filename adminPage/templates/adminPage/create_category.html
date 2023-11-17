@@ -1,0 +1,78 @@
+{% extends 'adminPage/admin_profile.html' %}
+{% load static %}
+
+{% block content %}
+  <h2 class="text-center">Создать категорию</h2>
+  <form method="POST" enctype="multipart/form-data" class="question-form">
+    {% csrf_token %}
+    <label for="id_title">Название:</label>
+    <input id="id_title" type="text" name="title" required><br>
+    <label for="id_image">Изображение:</label>
+    <input id="id_image" type="file" name="image"><br>
+    <label for="id_description">Описание:</label>
+    <textarea id="id_description" name="description"></textarea><br>
+    <input id="id_slug" type="hidden" name="slug">
+    <button type="submit">Сохранить</button>
+  </form>
+
+  <style>
+    .question-form {
+      width: 75%;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background-color: #f8f8f8;
+    }
+
+    .question-form h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    .question-form label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .question-form input[type="text"],
+    .question-form input[type="number"],
+    .question-form input[type="file"],
+    .question-form select,
+    .question-form textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    .question-form input[type="checkbox"] {
+      width: auto;
+    }
+
+    .question-form button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      background-color: #007BFF;
+      cursor: pointer;
+    }
+
+    .question-form button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+  document.getElementById('id_title').addEventListener('input', function(e) {
+    var title = e.target.value;
+    var slug = title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+    document.getElementById('id_slug').value = slug;
+  });
+  </script>
+{% endblock %}

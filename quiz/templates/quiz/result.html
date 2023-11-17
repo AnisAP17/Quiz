@@ -9,6 +9,15 @@
         border-radius: 5px;
         box-shadow: 0 2px 5px rgba(0,0,0,0.15);
     }
+    .result.correct {
+        background-color: rgba(0, 128, 0, 0.5); /* зеленый фон с 50% прозрачностью */
+    }
+    .result.partially-correct {
+        background-color: rgba(255, 165, 0, 0.5); /* оранжевый фон с 50% прозрачностью */
+    }
+    .result.incorrect {
+        background-color: rgba(255, 0, 0, 0.5); /* красный фон с 50% прозрачностью */
+    }
     .result h2 {
         color: #333;
         margin-bottom: 10px;
@@ -23,12 +32,14 @@
 <h1 class="py-4" style="text-align: center; color: #333; margin-bottom: 40px;">Результаты теста</h1>
 {% for result in results %}
 <div class="d-flex justify-content-center">
-<div class="result">
+<div class="result {% if result.is_correct %}correct{% elif result.is_partially_correct %}partially-correct{% else %}incorrect{% endif %}">
     <h2>{{forloop.counter}}) {{ result.question }}</h2>
     <p><strong>Ваши ответы:</strong> {{ result.user_answers|join:", " }}</p>
     <p><strong>Правильные ответы:</strong> {{ result.correct_answers|join:", " }}</p>
     {% if result.is_correct %}
     <p style="color: green;"><strong>{{ result.result_text }}</strong></p>
+    {% elif result.is_partially_correct %}
+    <p style="color: orange;"><strong>{{ result.result_text }}</strong></p>
     {% else %}
     <p style="color: red;"><strong>Вы не правильно ответили.</strong></p>
     {% endif %}

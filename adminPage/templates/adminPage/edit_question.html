@@ -1,0 +1,30 @@
+{% extends 'adminPage/admin_profile.html' %}
+{% load static %}
+
+{% block content %}
+  <h2>Редактировать вопрос</h2>
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    {{ formset.management_form }}
+    <div id="formset-container">
+        {% for form in formset %}
+            <div class="formset-form">
+                {{ form.as_p }}
+            </div>
+        {% endfor %}
+    </div>
+    <input type="submit" value="Сохранить">
+  </form>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="{% static 'js/jquery.formset.js' %}"></script>
+  <script>
+  $(function() {
+      $('#formset-container').formset({
+          addText: 'Добавить ответ',
+          deleteText: 'Удалить ответ',
+      });
+  });
+  </script>
+{% endblock %}

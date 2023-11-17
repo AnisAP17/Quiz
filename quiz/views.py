@@ -11,7 +11,7 @@ from django.contrib import messages
 def index_view(request):
     categories = Category.objects.all() \
     .annotate(
-        quiz_count=Count('quiz__id')
+        quiz_count=Count('quiz')  # Измените 'id' на 'quiz'
     ).filter(
         quiz_count__gte=1
     ).order_by('npp')
@@ -86,7 +86,7 @@ def quiz_view(request, category_slug, quiz_slug):
                 messages.error(request, 'Вы уже пропустили этот вопрос.')
             request.session['id'] = question.id
             request.session.modified = True  # Добавлено здесь
-            return redirect('quiz', category_slug=category_slug, quiz_slug=quiz_slug)
+            return redirect('quiz_view', category_slug=category_slug, quiz_slug=quiz_slug)
 
         answer_ids = request.POST.getlist('answer')
         if not answer_ids:
@@ -119,7 +119,7 @@ def quiz_view(request, category_slug, quiz_slug):
 
         request.session['id'] = question.id
         request.session.modified = True  # Добавлено здесь
-        return redirect('quiz', category_slug=category_slug, quiz_slug=quiz_slug)
+        return redirect('quiz_view', category_slug=category_slug, quiz_slug=quiz_slug)
 
     correct_answers_count = question.answer_set.filter(is_correct=True).count()
 
@@ -204,11 +204,22 @@ def results(request):
     user_answers = UserAnswer.objects.filter(user=request.user).prefetch_related('answers', 'correct_answer')
     results = []
     for user_answer in user_answers:
+        user_answer_set = set(user_answer.answers.all())
+        correct_answer_set = set(user_answer.correct_answer.all())
+        is_correct = user_answer_set == correct_answer_set
+        is_partially_correct = len(user_answer_set & correct_answer_set) > 0
+        result_text = ''
+        if is_correct:
+            result_text = 'Ответ правильный'
+        elif is_partially_correct:
+            result_text = 'Один из ответов правильный'
         result = {
             'question': user_answer.question.question,
             'user_answers': [answer.answer for answer in user_answer.answers.all()],
             'correct_answers': [answer.answer for answer in user_answer.correct_answer.all()],
-            'is_correct': set(user_answer.answers.all()) == set(user_answer.correct_answer.all()),
+            'is_correct': is_correct,
+            'is_partially_correct': is_partially_correct,
+            'result_text': result_text,
         }
         results.append(result)
 

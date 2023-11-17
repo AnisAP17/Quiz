@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'accounts',
     'main',
     'quiz',
+    'adminPage',
 ]
 
 MIDDLEWARE = [
@@ -51,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'questionnaire.middleware.SetUserMiddleware',
 ]
 
 ROOT_URLCONF = 'questionnaire.urls'

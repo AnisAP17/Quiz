@@ -1,3 +1,4 @@
+from django.forms import ValidationError
 from accounts.models import CustomUser
 
 from django.db import models
@@ -19,6 +20,7 @@ from django.db.models import (
 )
 
 from django.urls import reverse
+from threadlocals.threadlocals import get_thread_variable
 
 
 class Category(Model):
@@ -43,6 +45,7 @@ class Category(Model):
     npp = PositiveSmallIntegerField(
         verbose_name='сортировка',
         default=0,
+        blank=True
     )
 
     def __str__(self):
@@ -57,12 +60,11 @@ class Category(Model):
         )
 
     def get_absolute_url(self):
-        return reverse(
-            'category',
-            kwargs={
-                'category_slug': self.slug,
-            }
-        )
+        user = get_thread_variable('user')
+        if user.is_staff:
+            return reverse('admin_category_view', args=[self.slug])
+        else:
+            return reverse('category_view', args=[self.slug])
 
 
 class Quiz(Model):
@@ -119,6 +121,7 @@ class Quiz(Model):
     )
     time_limit = models.IntegerField(
         default=0,
+        blank=True
         )  # Время в секундах
 
     def __str__(self):
@@ -139,13 +142,23 @@ class Quiz(Model):
        )
 
     def get_absolute_url(self):
-       return reverse(
-           'quiz',
-           kwargs={
-               'quiz_slug': self.slug,
-               'category_slug': self.category.slug,
-           }
-       )
+        user = get_thread_variable('user')
+        if user.is_staff:
+            return reverse(
+                'admin_quiz_view',
+                kwargs={
+                    'quiz_slug': self.slug,
+                    'category_slug': self.category.slug,
+                }
+            )
+        else:
+            return reverse(
+                'quiz_view',
+                kwargs={
+                    'quiz_slug': self.slug,
+                    'category_slug': self.category.slug,
+                }
+            )
 
 
 class Question(Model):
@@ -175,6 +188,11 @@ class Question(Model):
        db_table = 'questions'
        verbose_name = 'вопрос'
        verbose_name_plural = 'вопросы'
+       
+       
+   def clean(self):
+        if Question.objects.filter(quiz=self.quiz, question=self.question).exists():
+            raise ValidationError("Такой вопрос уже существует в этом тесте.")
 
 
 class Answer(Model):
@@ -195,6 +213,7 @@ class Answer(Model):
        Question,
        on_delete=CASCADE,
        verbose_name='вопрос',
+       blank=True
    )
    score = FloatField(
        verbose_name='баллы',
