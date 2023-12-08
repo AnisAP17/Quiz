@@ -8,7 +8,28 @@
 </div> -->
 <h2 class="text-center">{{title}}</h2>
 <div class="p-2" style="border-radius:10px; background-color: white;">
-
+  <div class="my-3 d-flex justify-content-center">
+    <button id="toggleButton" class="mx-5  btn btn-primary">Добавить тест</button>
+      <a href="{% url 'admin_profile'%}" class="mx-5 goBack btn btn-primary">Назад</a>
+      </div>
+      <form id="formContainer" style="display: none;" method="POST" enctype="multipart/form-data" class="test-form my-5">
+          {% csrf_token %}
+          <label for="{{ form.author.id_for_label }}">Автор:</label>
+          {{ form.author }}<br>
+          <label for="{{ form.image.id_for_label }}">Изображение:</label>
+          {{ form.image }}<br>
+          <label for="{{ form.title.id_for_label }}">Название:</label>
+          {{ form.title }}<br>
+          <label for="{{ form.description.id_for_label }}">Описание:</label>
+          {{ form.description }}<br>
+          <label for="{{ form.is_public.id_for_label }}">Опубликовано:</label>
+          {{ form.is_public }}<br>
+          {{ form.category }}<br>
+          <label for="{{ form.time_limit.id_for_label }}">Временной лимит:</label>
+          {{ form.time_limit }}<br>
+          <input id="{{ form.slug.id_for_label }}" type="hidden" name="slug">
+          <button type="submit" class="btn btn-success">Сохранить</button>
+        </form>
     <div class="row">
         {% for quiz in quizzes %}
         <div class="col-sm-4" style="border-radius: 5px; margin-bottom: 20px;">
@@ -27,28 +48,7 @@
         </div>
         {% endfor %}
     </div>
-    <div class="d-flex justify-content-center">
-        <a href="{% url 'admin_profile'%}" class="mx-5 btn btn-primary">Назад</a>
-        <button id="toggleButton" class="mx-5  btn btn-primary">Добавить тест</button>
-        </div>
-        <form id="formContainer" style="display: none;" method="POST" enctype="multipart/form-data" class="test-form">
-            {% csrf_token %}
-            <label for="{{ form.author.id_for_label }}">Автор:</label>
-            {{ form.author }}<br>
-            <label for="{{ form.image.id_for_label }}">Изображение:</label>
-            {{ form.image }}<br>
-            <label for="{{ form.title.id_for_label }}">Название:</label>
-            {{ form.title }}<br>
-            <label for="{{ form.description.id_for_label }}">Описание:</label>
-            {{ form.description }}<br>
-            <label for="{{ form.is_public.id_for_label }}">Опубликовано:</label>
-            {{ form.is_public }}<br>
-            {{ form.category }}<br>
-            <label for="{{ form.time_limit.id_for_label }}">Временной лимит:</label>
-            {{ form.time_limit }}<br>
-            <input id="{{ form.slug.id_for_label }}" type="hidden" name="slug">
-            <button type="submit" class="btn btn-success">Сохранить</button>
-          </form>
+
 </div>
 
 
@@ -126,6 +126,20 @@
   }
 
   .test-form button:hover {
+    background-color: #0056b3;
+  }
+  .goBack {
+    display: block;
+    width: 10%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    background-color: #007BFF;
+    cursor: pointer;
+  }
+
+  .goBack:hover {
     background-color: #0056b3;
   }
 </style>

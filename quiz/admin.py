@@ -20,6 +20,8 @@ class AnswerTabularInline(TabularInline):
     model = Answer
     min_num = 2
     extra = 0
+    model = Answer
+    fk_name = 'question'  # Используйте имя поля ForeignKey, которое вы хотите использовать
 
 
 @register(Category)

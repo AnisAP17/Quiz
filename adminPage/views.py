@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.db.models import Count
 from quiz.models import Category, Question, Quiz, Answer, UserAnswer
-from .forms import CategoryForm, QuizForm, QuestionForm, AnswerForm
+from .forms import CategoryForm, QuizForm, QuestionForm, TextAnswerForm, DateAnswerForm, NumberAnswerForm, RangeAnswerForm
 from django.utils.text import slugify
 from django.forms import ValidationError, modelformset_factory
 
@@ -58,39 +58,22 @@ def admin_category_view(request, category_slug):
         context['title1'] = f'В категории «{category.title}» нету тестов'
         return render(request, 'adminPage/no_admin_category.html', context=context)
 
+
 def admin_quiz_view(request, category_slug, quiz_slug):
     quiz = get_object_or_404(Quiz, slug=quiz_slug, category__slug=category_slug)
     questions = quiz.question_set.all().prefetch_related('answer_set')
 
-    AnswerFormSet = modelformset_factory(Answer, form=AnswerForm, extra=4)
-    if request.method == "POST":
-        form = QuestionForm(request.POST, request.FILES)
-        formset = AnswerFormSet(request.POST, request.FILES, prefix='answers')
-        if form.is_valid() and formset.is_valid():
-            question = form.save(commit=False)
-            question.quiz = quiz
-            question.save()
-            for answer_form in formset:
-                if answer_form.cleaned_data.get('answer'):  # проверяем, что поле ответа не пустое
-                    answer = answer_form.save(commit=False)
-                    answer.question = question
-                    answer.save()
-            return redirect('admin_quiz_view', category_slug=category_slug, quiz_slug=quiz_slug)
-    else:
-        form = QuestionForm(initial={'quiz': quiz})
-        formset = AnswerFormSet(prefix='answers', queryset=Answer.objects.none())
-
     context = {
         'quiz': quiz,
-        'form': form,
-        'formset': formset,
-        'questions': questions,  # передаем все вопросы в контекст
+        'questions': questions,
     }
 
     if questions.exists():
         return render(request, 'adminPage/admin_quiz.html', context=context)
     else:
         return render(request, 'adminPage/no_admin_quiz.html', context=context)
+
+
 
 
 # Create your views here.

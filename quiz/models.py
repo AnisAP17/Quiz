@@ -181,6 +181,8 @@ class Question(Model):
        blank=True,
    )
 
+   
+
    def __str__(self):
        return self.question[:50]
 
@@ -196,10 +198,7 @@ class Question(Model):
 
 
 class Answer(Model):
-   answer = CharField(
-       verbose_name='ответ',
-       max_length=150,
-   )
+
    is_correct = BooleanField(
        verbose_name='правильный ответ',
        default=False,
@@ -219,6 +218,35 @@ class Answer(Model):
        verbose_name='баллы',
         default=0   
    )
+   answer = CharField(
+       verbose_name='ответ',
+       max_length=150,
+       blank=True,
+       null=True
+   )
+   date_answer = DateField(
+        verbose_name='ответ даты',
+        blank=True,
+        null=True
+
+    )
+   number_answer = FloatField(
+        verbose_name='числовой ответ',
+        blank=True,
+       null=True
+    )
+   range_start = FloatField(
+        verbose_name='начало диапазона',
+        blank=True,
+       null=True
+    )
+   range_end = FloatField(
+        verbose_name='конец диапазона',
+        blank=True,
+       null=True
+    )
+
+
 
    def __str__(self):
       return self.answer

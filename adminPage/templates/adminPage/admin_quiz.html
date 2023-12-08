@@ -6,42 +6,33 @@
 
 {% block content %}
 <div style="background-color: white; padding: 20px;">
-      <h1>{{ quiz.title }}</h1>
-      <form method="POST" enctype="multipart/form-data" class="question-form">
-        {% csrf_token %}
-        {{ form.as_p }}
-        {{ formset.management_form }}
-        <div id="formset-container" class="formset-container">
-            {% for form in formset %}
-                <div class="formset-form">
-                    {{ form.as_p }}
-                </div>
-            {% endfor %}
-        </div>
-        <input type="submit" value="Сохранить">
-      </form>
-      {% for question in questions %}
-      <h2>{{forloop.counter}}) {{ question.question }}</h2>
-      <ul>
-        {% for answer in question.answer_set.all %}
-          <li>{{ answer.answer }}</li>
-        {% endfor %}
-      </ul>
+  <h1>{{ quiz.title }}</h1>
+  <div class="py-4 d-flex justify-content-center">
+    <button class="goBack mx-5" onclick="goBack()">Назад</button>
+  </div>
+
+  {% for question in questions %}
+  <h2>{{forloop.counter}}) {{ question.question }}</h2>
+  <ul>
+    {% for answer in question.answer_set.all %}
+      <li>{{ answer.answer }}</li>
     {% endfor %}
-    
-    
+  </ul>
+{% endfor %}
 </div>
 
-
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="{% static 'js/jquery.formset.js' %}"></script>
+
 <script>
-// При нажатии на кнопку "Добавить вопрос к тесту" показать форму
-document.getElementById('addQuestionButton').addEventListener('click', function() {
-    document.getElementById('addQuestionForm').style.display = 'block';
-});
+    // Function to navigate back to a specific URL
+    function goBack() {
+      console.log('gg')
+      window.history.go(-1);
+    }
 </script>
+
+
 
 <style>
     .question-form {
@@ -126,6 +117,35 @@ document.getElementById('addQuestionButton').addEventListener('click', function(
     .question-form input[type="submit"]:hover {
       background-color: #0056b3;
     }
+    .addQuestion {
+      display: block;
+      width: 12%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      background-color: #007BFF;
+      cursor: pointer;
+    }
+
+    .addQuestion:hover {
+      background-color: #0056b3;
+    }
+    .goBack {
+      display: block;
+      width: 12%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      background-color: #007BFF;
+      cursor: pointer;
+    }
+
+    .goBack:hover {
+      background-color: #0056b3;
+    }
   </style>
+
 
 {% endblock content %}

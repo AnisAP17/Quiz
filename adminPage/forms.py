@@ -32,9 +32,42 @@ class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
         fields = ['quiz', 'question', 'full_text', 'image']
-        
 
-class AnswerForm(forms.ModelForm):
+
+
+class TextAnswerForm(forms.ModelForm):
     class Meta:
         model = Answer
-        fields = ['answer', 'is_correct', 'score']
+        fields = ['is_correct', 'comment', 'question', 'score', 'answer']         
+        widgets = {
+            'question': forms.HiddenInput(),
+            # другие виджеты...
+        }
+
+
+class DateAnswerForm(forms.ModelForm):
+    class Meta:
+        model = Answer
+        fields = ['is_correct', 'comment', 'question', 'score', 'date_answer']
+        widgets = {
+            'question': forms.HiddenInput(),
+            # другие виджеты...
+        }
+
+class NumberAnswerForm(forms.ModelForm):
+    class Meta:
+        model = Answer
+        fields = ['is_correct', 'comment', 'question', 'score', 'number_answer']
+        widgets = {
+            'question': forms.HiddenInput(),
+            # другие виджеты...
+        }
+
+class RangeAnswerForm(forms.ModelForm):
+    class Meta:
+        model = Answer
+        fields = ['is_correct', 'comment', 'question', 'score', 'range_start', 'range_end']
+        widgets = {
+            'question': forms.HiddenInput(),
+            # другие виджеты...
+        }

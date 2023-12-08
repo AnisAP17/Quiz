@@ -5,122 +5,61 @@
 {% endblock title %}
 
 {% block content %}
-<div style="border-radius: 10px; background-color: white; padding: 20px;">
-    <h2 class="text-center">В этом тесте пока нету вопросов</h2>
-    <div class="py-4 d-flex justify-content-center">
-        <button id="addQuestionButton" class=" btn btn-primary">Добавить вопрос к тесту</button>
-    </div>
-    <div id="addQuestionForm" style="display: none;">
-        <form method="POST" enctype="multipart/form-data" class="question-form">
-            {% csrf_token %}
-            {{ form.as_p }}
-            {{ formset.management_form }}
-            <div id="formset-container" class="formset-container">
-                {% for form in formset %}
-                    <div class="formset-form">
-                        {{ form.as_p }}
-                    </div>
-                {% endfor %}
-            </div>
-            <input type="submit" value="Сохранить">
-          </form>
-    </div>
-
+<div class="d-flex">
+<div class="vw-100">
+  <div>
+  <h2 class="text-center">В этом тесте пока нету вопросов</h2></br>
 </div>
 
-
+    <div class="py-4 d-flex justify-content-center">
+      <button class="goBack mx-5" onclick="goBack()">Назад</button>
+    </div>
+    </div>
+<div class="bg-white px-4 py-2 my-5" style="border-radius:10px">
+  <div>
+    sadsadsd
+  </div>
+  <div>
+    asdasdasas
+  </div>
+</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="{% static 'js/jquery.formset.js' %}"></script>
+
 <script>
-// При нажатии на кнопку "Добавить вопрос к тесту" показать форму
-document.getElementById('addQuestionButton').addEventListener('click', function() {
-    document.getElementById('addQuestionForm').style.display = 'block';
-});
+    // Function to navigate back to a specific URL
+    function goBack() {
+      console.log('gg')
+      window.history.go(-1);
+    }
 </script>
 
 <style>
-    .question-form {
-      width: 75%;
-      margin: auto;
-      padding: 20px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      background-color: #f8f8f8;
-    }
+  .title-background {
+      background-repeat: no-repeat;
+      background-position: center;
+  }
 
-    .question-form h2 {
-      text-align: center;
-      color: #333;
-    }
+  h2:hover{
+      text-decoration: underline solid rgb(133, 133, 133);;
+  }
 
-    .formset-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-    }
+.goBack {
+  display: block;
+  width: 10%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  background-color: #007BFF;
+  cursor: pointer;
+}
 
-    .formset-form {
-      display: flex;
-      flex: 1 0 calc(33.33% - 10px);
-      margin-bottom: 10px;
-    }
+.goBack:hover {
+  background-color: #0056b3;
+}
+</style>
 
-    input[type="text"] {
-      width: 25vh;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    input[type="number"] {
-        width: 25vh;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-    input[type="file"] {
-        width: 25vh;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-    label{
-        width: 25vh;
-    }
-    input[type="checkbox"] {
-        width: 10vh;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-    textarea{
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-    select{
-        width: 25vh;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-    
-      
-
-    .question-form input[type="submit"] {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      color: #fff;
-      background-color: #007BFF;
-      cursor: pointer;
-    }
-
-    .question-form input[type="submit"]:hover {
-      background-color: #0056b3;
-    }
-  </style>
 
 {% endblock content %}
